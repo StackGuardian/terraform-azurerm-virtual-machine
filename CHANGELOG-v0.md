@@ -1,19 +1,9 @@
 # Changelog
 
-## [1.1.0](https://github.com/Azure/terraform-azurerm-virtual-machine/tree/1.1.0) (2023-11-23)
+## [Unreleased](https://github.com/Azure/terraform-azurerm-virtual-machine/tree/HEAD)
 
 **Merged pull requests:**
 
-- Support `bypass_platform_safety_checks_on_user_schedule_enabled` and `reboot_setting` [\#66](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/66) ([davidkarlsen](https://github.com/davidkarlsen))
-- Fix anchor link for e2e test on README.md [\#47](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/47) ([exe-r](https://github.com/exe-r))
-- Fix checkov issue [\#46](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/46) ([lonegunmanb](https://github.com/lonegunmanb))
-- Bump github.com/Azure/terraform-module-test-helper from 0.13.0 to 0.15.0 in /test [\#45](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/45) ([dependabot[bot]](https://github.com/apps/dependabot))
-
-## [1.0.0](https://github.com/Azure/terraform-azurerm-virtual-machine/tree/1.0.0) (2023-06-02)
-
-**Merged pull requests:**
-
-- Prepare for 1.0.0 [\#36](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/36) ([lonegunmanb](https://github.com/lonegunmanb))
 - add VM Extension dependency on data disks attachment and output list of attached disk\(s\) \#33 [\#35](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/35) ([tl-aiyor](https://github.com/tl-aiyor))
 - Remove precondition on boot\_diagnostics [\#32](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/32) ([lonegunmanb](https://github.com/lonegunmanb))
 - add tracing tag toggle variables and update readme [\#28](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/28) ([lonegunmanb](https://github.com/lonegunmanb))
@@ -28,6 +18,12 @@
 - Catch iterator variable to avoid potential concurrent error in tests [\#9](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/9) ([lonegunmanb](https://github.com/lonegunmanb))
 - Bump github.com/Azure/terraform-module-test-helper from 0.7.1 to 0.8.1 in /test [\#8](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/8) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Bump github.com/gruntwork-io/terratest from 0.41.9 to 0.41.10 in /test [\#7](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/7) ([dependabot[bot]](https://github.com/apps/dependabot))
+
+## [0.1.0](https://github.com/Azure/terraform-azurerm-virtual-machine/tree/0.1.0) (2023-01-29)
+
+**Merged pull requests:**
+
+- Adding Microsoft SECURITY.MD [\#5](https://github.com/Azure/terraform-azurerm-virtual-machine/pull/5) ([microsoft-github-policy-service[bot]](https://github.com/apps/microsoft-github-policy-service))
 
 
 

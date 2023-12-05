@@ -27,7 +27,9 @@ resource "azurerm_storage_account" "boot_diagnostics" {
     avm_git_last_modified_at = "2022-12-29 13:09:50"
     avm_git_org              = "Azure"
     avm_git_repo             = "terraform-azurerm-virtual-machine"
-    avm_yor_trace            = "215680c8-4d1e-48e9-b963-f085642d4810"
+    avm_yor_trace            = "c5b495dd-366d-4c38-b402-6e9996c6c530"
+    } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/), (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
+    avm_yor_name = "boot_diagnostics"
   } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/))
 
   dynamic "blob_properties" {
@@ -92,42 +94,46 @@ resource "azurerm_storage_account" "boot_diagnostics" {
 resource "azurerm_linux_virtual_machine" "vm_linux" {
   count = local.is_linux ? 1 : 0
 
-  admin_username                  = var.admin_username
-  location                        = var.location
-  name                            = var.name
-  network_interface_ids           = local.network_interface_ids
-  resource_group_name             = var.resource_group_name
-  size                            = var.size
-  admin_password                  = var.admin_password
-  allow_extension_operations      = var.allow_extension_operations
-  availability_set_id             = var.availability_set_id
-  capacity_reservation_group_id   = var.capacity_reservation_group_id
-  computer_name                   = coalesce(var.computer_name, var.name)
-  custom_data                     = var.custom_data
-  dedicated_host_group_id         = var.dedicated_host_group_id
-  dedicated_host_id               = var.dedicated_host_id
-  disable_password_authentication = var.disable_password_authentication
-  edge_zone                       = var.edge_zone
-  encryption_at_host_enabled      = var.encryption_at_host_enabled
-  eviction_policy                 = var.eviction_policy
-  extensions_time_budget          = var.extensions_time_budget
-  license_type                    = var.license_type
-  max_bid_price                   = var.max_bid_price
-  patch_assessment_mode           = var.patch_assessment_mode
-  patch_mode                      = local.patch_mode
-  platform_fault_domain           = var.platform_fault_domain
-  priority                        = var.priority
-  provision_vm_agent              = var.provision_vm_agent
-  proximity_placement_group_id    = var.proximity_placement_group_id
-  secure_boot_enabled             = var.secure_boot_enabled
-  source_image_id                 = var.source_image_id
+  admin_username                                         = var.admin_username
+  location                                               = var.location
+  name                                                   = var.name
+  network_interface_ids                                  = local.network_interface_ids
+  resource_group_name                                    = var.resource_group_name
+  size                                                   = var.size
+  admin_password                                         = var.admin_password
+  allow_extension_operations                             = var.allow_extension_operations
+  availability_set_id                                    = var.availability_set_id
+  bypass_platform_safety_checks_on_user_schedule_enabled = var.bypass_platform_safety_checks_on_user_schedule_enabled
+  capacity_reservation_group_id                          = var.capacity_reservation_group_id
+  computer_name                                          = coalesce(var.computer_name, var.name)
+  custom_data                                            = var.custom_data
+  dedicated_host_group_id                                = var.dedicated_host_group_id
+  dedicated_host_id                                      = var.dedicated_host_id
+  disable_password_authentication                        = var.disable_password_authentication
+  edge_zone                                              = var.edge_zone
+  encryption_at_host_enabled                             = var.encryption_at_host_enabled
+  eviction_policy                                        = var.eviction_policy
+  extensions_time_budget                                 = var.extensions_time_budget
+  license_type                                           = var.license_type
+  max_bid_price                                          = var.max_bid_price
+  patch_assessment_mode                                  = var.patch_assessment_mode
+  patch_mode                                             = local.patch_mode
+  platform_fault_domain                                  = var.platform_fault_domain
+  priority                                               = var.priority
+  provision_vm_agent                                     = var.provision_vm_agent
+  proximity_placement_group_id                           = var.proximity_placement_group_id
+  reboot_setting                                         = var.reboot_setting
+  secure_boot_enabled                                    = var.secure_boot_enabled
+  source_image_id                                        = var.source_image_id
   tags = merge(var.tags, (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
-    avm_git_commit           = "3e89abe6574b2b38fe9bbf15949782bf337bdbdb"
+    avm_git_commit           = "b64ecfc706205b7c0a1e9c91feae63a35f32b3da"
     avm_git_file             = "main.tf"
-    avm_git_last_modified_at = "2023-01-06 12:36:49"
+    avm_git_last_modified_at = "2023-11-23 13:50:04"
     avm_git_org              = "Azure"
     avm_git_repo             = "terraform-azurerm-virtual-machine"
-    avm_yor_trace            = "d0701238-4893-41ae-900f-c2e65c8e63c0"
+    avm_yor_trace            = "b2236e7a-5f3d-4d34-8fa7-867bf4e3be7c"
+    } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/), (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
+    avm_yor_name = "vm_linux"
   } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/))
   user_data                    = var.user_data
   virtual_machine_scale_set_id = var.virtual_machine_scale_set_id
@@ -267,10 +273,6 @@ resource "azurerm_linux_virtual_machine" "vm_linux" {
       error_message = "Must provide one and only one of `vm_source_image_id`, `vm_source_image_reference` and `vm_os_simple`."
     }
     precondition {
-      condition     = !var.boot_diagnostics ? true : var.new_boot_diagnostics_storage_account != null || var.boot_diagnostics_storage_account_uri != null
-      error_message = "Either `new_boot_diagnostics_storage_account` or `vm_boot_diagnostics_storage_account_uri` must be provided if `boot_diagnostics` is `true`."
-    }
-    precondition {
       condition     = var.network_interface_ids != null || var.new_network_interface != null
       error_message = "Either `new_network_interface` or `network_interface_ids` must be provided."
     }
@@ -279,49 +281,61 @@ resource "azurerm_linux_virtual_machine" "vm_linux" {
       condition     = alltrue([for value in var.admin_ssh_keys : value.username == var.admin_username || value.username == null])
       error_message = "`username` in var.admin_ssh_keys should be the same as `admin_username` or `null`."
     }
+    precondition {
+      condition     = !var.bypass_platform_safety_checks_on_user_schedule_enabled || local.patch_mode == "AutomaticByPlatform"
+      error_message = "`bypass_platform_safety_checks_on_user_schedule_enabled` can only be set when patch_mode is `AutomaticByPlatform`"
+    }
+    precondition {
+      condition     = var.reboot_setting == null || local.patch_mode == "AutomaticByPlatform"
+      error_message = "`reboot_setting` can only be set when patch_mode is `AutomaticByPlatform`"
+    }
   }
 }
 
 resource "azurerm_windows_virtual_machine" "vm_windows" {
   count = local.is_windows ? 1 : 0
 
-  admin_password                = var.admin_password
-  admin_username                = var.admin_username
-  location                      = var.location
-  name                          = var.name
-  network_interface_ids         = local.network_interface_ids
-  resource_group_name           = var.resource_group_name
-  size                          = var.size
-  allow_extension_operations    = var.allow_extension_operations
-  availability_set_id           = var.availability_set_id
-  capacity_reservation_group_id = var.capacity_reservation_group_id
-  computer_name                 = coalesce(var.computer_name, var.name)
-  custom_data                   = var.custom_data
-  dedicated_host_group_id       = var.dedicated_host_group_id
-  dedicated_host_id             = var.dedicated_host_id
-  edge_zone                     = var.edge_zone
-  enable_automatic_updates      = var.automatic_updates_enabled
-  encryption_at_host_enabled    = var.encryption_at_host_enabled
-  eviction_policy               = var.eviction_policy
-  extensions_time_budget        = var.extensions_time_budget
-  hotpatching_enabled           = var.hotpatching_enabled
-  license_type                  = var.license_type
-  max_bid_price                 = var.max_bid_price
-  patch_assessment_mode         = var.patch_assessment_mode
-  patch_mode                    = local.patch_mode
-  platform_fault_domain         = var.platform_fault_domain
-  priority                      = var.priority
-  provision_vm_agent            = var.provision_vm_agent
-  proximity_placement_group_id  = var.proximity_placement_group_id
-  secure_boot_enabled           = var.secure_boot_enabled
-  source_image_id               = var.source_image_id
+  admin_password                                         = var.admin_password
+  admin_username                                         = var.admin_username
+  location                                               = var.location
+  name                                                   = var.name
+  network_interface_ids                                  = local.network_interface_ids
+  resource_group_name                                    = var.resource_group_name
+  size                                                   = var.size
+  allow_extension_operations                             = var.allow_extension_operations
+  availability_set_id                                    = var.availability_set_id
+  bypass_platform_safety_checks_on_user_schedule_enabled = var.bypass_platform_safety_checks_on_user_schedule_enabled
+  capacity_reservation_group_id                          = var.capacity_reservation_group_id
+  computer_name                                          = coalesce(var.computer_name, var.name)
+  custom_data                                            = var.custom_data
+  dedicated_host_group_id                                = var.dedicated_host_group_id
+  dedicated_host_id                                      = var.dedicated_host_id
+  edge_zone                                              = var.edge_zone
+  enable_automatic_updates                               = var.automatic_updates_enabled
+  encryption_at_host_enabled                             = var.encryption_at_host_enabled
+  eviction_policy                                        = var.eviction_policy
+  extensions_time_budget                                 = var.extensions_time_budget
+  hotpatching_enabled                                    = var.hotpatching_enabled
+  license_type                                           = var.license_type
+  max_bid_price                                          = var.max_bid_price
+  patch_assessment_mode                                  = var.patch_assessment_mode
+  patch_mode                                             = local.patch_mode
+  platform_fault_domain                                  = var.platform_fault_domain
+  priority                                               = var.priority
+  provision_vm_agent                                     = var.provision_vm_agent
+  proximity_placement_group_id                           = var.proximity_placement_group_id
+  reboot_setting                                         = var.reboot_setting
+  secure_boot_enabled                                    = var.secure_boot_enabled
+  source_image_id                                        = var.source_image_id
   tags = merge(var.tags, (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
-    avm_git_commit           = "3e89abe6574b2b38fe9bbf15949782bf337bdbdb"
+    avm_git_commit           = "b64ecfc706205b7c0a1e9c91feae63a35f32b3da"
     avm_git_file             = "main.tf"
-    avm_git_last_modified_at = "2023-01-06 12:36:49"
+    avm_git_last_modified_at = "2023-11-23 13:50:04"
     avm_git_org              = "Azure"
     avm_git_repo             = "terraform-azurerm-virtual-machine"
-    avm_yor_trace            = "ffaa4381-fb26-4049-aaa4-6b76a34fdf1b"
+    avm_yor_trace            = "2c38c76d-7f2e-47f5-93ea-efb78960f1a6"
+    } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/), (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
+    avm_yor_name = "vm_windows"
   } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/))
   timezone                     = var.timezone
   user_data                    = var.user_data
@@ -473,12 +487,16 @@ resource "azurerm_windows_virtual_machine" "vm_windows" {
       error_message = "Must provide one and only one of `vm_source_image_id`, `vm_source_image_reference` and `vm_os_simple`."
     }
     precondition {
-      condition     = !var.boot_diagnostics ? true : var.new_boot_diagnostics_storage_account != null || var.boot_diagnostics_storage_account_uri != null
-      error_message = "Either `new_boot_diagnostics_storage_account` or `vm_boot_diagnostics_storage_account_uri` must be provided if `boot_diagnostics` is `true`."
-    }
-    precondition {
       condition     = var.network_interface_ids != null || var.new_network_interface != null
       error_message = "Either `new_network_interface` or `network_interface_ids` must be provided."
+    }
+    precondition {
+      condition     = !var.bypass_platform_safety_checks_on_user_schedule_enabled || local.patch_mode == "AutomaticByPlatform"
+      error_message = "`bypass_platform_safety_checks_on_user_schedule_enabled` can only be set when patch_mode is `AutomaticByPlatform`"
+    }
+    precondition {
+      condition     = var.reboot_setting == null || local.patch_mode == "AutomaticByPlatform"
+      error_message = "`reboot_setting` can only be set when patch_mode is `AutomaticByPlatform`"
     }
   }
 }
@@ -541,7 +559,9 @@ resource "azurerm_network_interface" "vm" {
     avm_git_last_modified_at = "2023-01-17 02:03:20"
     avm_git_org              = "Azure"
     avm_git_repo             = "terraform-azurerm-virtual-machine"
-    avm_yor_trace            = "cfa0bd9f-8637-4fb4-ac63-f449b56caf32"
+    avm_yor_trace            = "7a9b7092-4618-41a8-aaca-d429e526a767"
+    } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/), (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
+    avm_yor_name = "vm"
   } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/))
 
   dynamic "ip_configuration" {
@@ -609,7 +629,9 @@ resource "azurerm_managed_disk" "disk" {
     avm_git_last_modified_at = "2023-01-17 02:03:20"
     avm_git_org              = "Azure"
     avm_git_repo             = "terraform-azurerm-virtual-machine"
-    avm_yor_trace            = "447af86b-2cb9-4571-a234-e7e548dab9d0"
+    avm_yor_trace            = "939ede21-d86f-435b-b663-41059b740f0c"
+    } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/), (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
+    avm_yor_name = "disk"
   } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/))
   tier                   = each.value.tier
   trusted_launch_enabled = each.value.trusted_launch_enabled
@@ -674,12 +696,14 @@ resource "azurerm_virtual_machine_extension" "extensions" {
   protected_settings          = each.value.protected_settings
   settings                    = each.value.settings
   tags = merge(var.tags, (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
-    avm_git_commit           = "c6c30c1119c3d25829b29efc3cc629b5d4767301"
+    avm_git_commit           = "e5c54b8f98757681c2d2215530ea0ec6bca2588f"
     avm_git_file             = "main.tf"
-    avm_git_last_modified_at = "2023-01-17 02:03:20"
+    avm_git_last_modified_at = "2023-05-31 08:40:27"
     avm_git_org              = "Azure"
     avm_git_repo             = "terraform-azurerm-virtual-machine"
-    avm_yor_trace            = "74bdb3b4-9c66-4fb5-88d0-7856c8df382d"
+    avm_yor_trace            = "98632022-de3e-4b59-aeb3-3bd7704d2dd7"
+    } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/), (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
+    avm_yor_name = "extensions"
   } /*<box>*/ : replace(k, "avm_", var.tracing_tags_prefix) => v } : {}) /*</box>*/))
 
   dynamic "protected_settings_from_key_vault" {
@@ -692,4 +716,6 @@ resource "azurerm_virtual_machine_extension" "extensions" {
       source_vault_id = each.value.protected_settings_from_key_vault.source_vault_id
     }
   }
+
+  depends_on = [azurerm_virtual_machine_data_disk_attachment.attachment]
 }

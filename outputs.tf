@@ -1,3 +1,8 @@
+output "data_disk_ids" {
+  description = "The list of data disk IDs attached to this Virtual Machine."
+  value       = [for attachment in azurerm_virtual_machine_data_disk_attachment.attachment : attachment.id]
+}
+
 output "network_interface_id" {
   description = "Id of the vm nic that created by this module. `null` if `var.network_interface_ids` is provided."
   value       = try(azurerm_network_interface.vm[0].id, null)
