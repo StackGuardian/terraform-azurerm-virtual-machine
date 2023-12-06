@@ -582,6 +582,7 @@ resource "azurerm_network_interface" "vm" {
       private_ip_address_allocation                      = azurerm_public_ip.pip.allocation_method
       primary                                            = true
       public_ip_address_id                               = azurerm_public_ip.pip.id
+      subnet_id                                          = var.subnet_id
     }
   }
 
