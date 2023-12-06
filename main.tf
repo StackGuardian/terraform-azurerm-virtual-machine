@@ -8,11 +8,10 @@ resource "random_id" "id" {
   byte_length = 2
 }
 resource "azurerm_public_ip" "pip" {
-  count = var.create_public_ip ? 1 : 0
 
   allocation_method   = "Dynamic"
   location            = var.location
-  name                = "pip-${random_id.id.hex}-${count.index}"
+  name                = "pip-${random_id.id.hex}"
   resource_group_name = var.resource_group_name
 }
 resource "azurerm_network_interface_security_group_association" "linux_nic" {
