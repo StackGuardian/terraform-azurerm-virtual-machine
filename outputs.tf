@@ -8,7 +8,7 @@ output "network_interface_id" {
   value       = try(azurerm_network_interface.vm[0].id, null)
 }
 output "linux_public_ip" {
-  value = try(azurerm_public_ip.pip[0].ip_address, null)
+  value = try(data.azurerm_public_ip.pip.ip_address, null)
 }
 
 output "network_interface_private_ip" {
