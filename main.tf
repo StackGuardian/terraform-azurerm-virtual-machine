@@ -4,6 +4,9 @@ resource "random_id" "vm_sa" {
     vm_name = var.name
   }
 }
+resource "random_id" "id" {
+  byte_length = 2
+}
 resource "azurerm_public_ip" "pip" {
   count = var.create_public_ip ? 1 : 0
 
