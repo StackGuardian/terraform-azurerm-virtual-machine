@@ -4,6 +4,19 @@ resource "random_id" "vm_sa" {
     vm_name = var.name
   }
 }
+resource "azurerm_public_ip" "pip" {
+  count = var.create_public_ip ? 1 : 0
+
+  allocation_method   = "Dynamic"
+  location            = var.location
+  name                = "pip-${random_id.id.hex}-${count.index}"
+  resource_group_name = var.resource_group_name
+}
+
+resource "azurerm_network_interface_security_group_association" "linux_nic" {
+  network_interface_id      = azurerm_linux_virtual_machine.vm_linux.network_interface_id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
 
 resource "azurerm_storage_account" "boot_diagnostics" {
   count = var.boot_diagnostics && var.new_boot_diagnostics_storage_account != null ? 1 : 0
@@ -169,6 +182,15 @@ resource "azurerm_linux_virtual_machine" "vm_linux" {
     content {
       ultra_ssd_enabled = var.vm_additional_capabilities.ultra_ssd_enabled
     }
+  }
+new_network_interface = {
+    ip_forwarding_enabled = false
+    ip_configurations = [
+      {
+        public_ip_address_id = try(azurerm_public_ip.pip[0].id, null)
+        primary              = true
+      }
+    ]
   }
   dynamic "admin_ssh_key" {
     for_each = { for key in var.admin_ssh_keys : jsonencode(key) => key }
