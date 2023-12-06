@@ -8,6 +8,11 @@ variable "image_os" {
     error_message = "`image_os` must be either `windows` or `linux`."
   }
 }
+variable "create_public_ip" {
+  type     = bool
+  default  = true
+  nullable = false
+}
 
 variable "location" {
   type        = string
