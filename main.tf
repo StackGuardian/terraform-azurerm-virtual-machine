@@ -731,4 +731,5 @@ data "azurerm_public_ip" "pip" {
 
   name                = azurerm_public_ip.pip.name
   resource_group_name = var.resource_group_name
+  depends_on = [azurerm_linux_virtual_machine.vm_linux, azurerm_windows_virtual_machine.vm_windows]
 }
