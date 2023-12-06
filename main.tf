@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = var.resource_group_name
 }
 resource "azurerm_network_interface_security_group_association" "linux_nic" {
-  network_interface_id      = azurerm_linux_virtual_machine.vm_linux.network_interface_id
+  network_interface_id      = azurerm_linux_virtual_machine.vm_linux[count.index].network_interface_ids
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
@@ -726,8 +726,7 @@ resource "azurerm_virtual_machine_extension" "extensions" {
 }
 
 data "azurerm_public_ip" "pip" {
-  count = var.create_public_ip ? 1 : 0
 
-  name                = azurerm_public_ip.pip[count.index].name
+  name                = azurerm_public_ip.pip.name
   resource_group_name = var.resource_group_name
 }
