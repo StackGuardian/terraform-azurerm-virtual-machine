@@ -15,7 +15,6 @@ resource "azurerm_public_ip" "pip" {
   name                = "pip-${random_id.id.hex}-${count.index}"
   resource_group_name = var.resource_group_name
 }
-
 resource "azurerm_network_interface_security_group_association" "linux_nic" {
   network_interface_id      = azurerm_linux_virtual_machine.vm_linux.network_interface_id
   network_security_group_id = azurerm_network_security_group.nsg.id
@@ -185,15 +184,6 @@ resource "azurerm_linux_virtual_machine" "vm_linux" {
     content {
       ultra_ssd_enabled = var.vm_additional_capabilities.ultra_ssd_enabled
     }
-  }
-new_network_interface = {
-    ip_forwarding_enabled = false
-    ip_configurations = [
-      {
-        public_ip_address_id = try(azurerm_public_ip.pip[0].id, null)
-        primary              = true
-      }
-    ]
   }
   dynamic "admin_ssh_key" {
     for_each = { for key in var.admin_ssh_keys : jsonencode(key) => key }
@@ -567,17 +557,12 @@ locals {
 }
 
 resource "azurerm_network_interface" "vm" {
-  count = var.new_network_interface != null ? 1 : 0
+  count = azurerm_public_ip.pip != null ? 1 : 0
 
   location                      = var.location
-  name                          = coalesce(var.new_network_interface.name, "${var.name}-nic")
+  name                          = coalesce(azurerm_public_ip.pip.name, "${var.name}-nic")
   resource_group_name           = var.resource_group_name
-  dns_servers                   = var.new_network_interface.dns_servers
-  edge_zone                     = var.new_network_interface.edge_zone
-  enable_accelerated_networking = var.new_network_interface.accelerated_networking_enabled
   #checkov:skip=CKV_AZURE_118
-  enable_ip_forwarding    = var.new_network_interface.ip_forwarding_enabled
-  internal_dns_name_label = var.new_network_interface.internal_dns_name_label
   tags = merge(var.tags, (/*<box>*/ (var.tracing_tags_enabled ? { for k, v in /*</box>*/ {
     avm_git_commit           = "c6c30c1119c3d25829b29efc3cc629b5d4767301"
     avm_git_file             = "main.tf"
@@ -593,14 +578,10 @@ resource "azurerm_network_interface" "vm" {
     for_each = local.network_interface_ip_configuration_indexes
 
     content {
-      name                                               = coalesce(var.new_network_interface.ip_configurations[ip_configuration.value].name, "${var.name}-nic${ip_configuration.value}")
-      private_ip_address_allocation                      = var.new_network_interface.ip_configurations[ip_configuration.value].private_ip_address_allocation
-      gateway_load_balancer_frontend_ip_configuration_id = var.new_network_interface.ip_configurations[ip_configuration.value].gateway_load_balancer_frontend_ip_configuration_id
-      primary                                            = var.new_network_interface.ip_configurations[ip_configuration.value].primary
-      private_ip_address                                 = var.new_network_interface.ip_configurations[ip_configuration.value].private_ip_address
-      private_ip_address_version                         = var.new_network_interface.ip_configurations[ip_configuration.value].private_ip_address_version
-      public_ip_address_id                               = var.new_network_interface.ip_configurations[ip_configuration.value].public_ip_address_id
-      subnet_id                                          = var.subnet_id
+      name                                               = coalesce(azurerm_public_ip.pip.name, "${var.name}-nic${ip_configuration.value}")
+      private_ip_address_allocation                      = azurerm_public_ip.pip.allocation_method
+      primary                                            = true
+      public_ip_address_id                               = azurerm_public_ip.pip.id
     }
   }
 
@@ -613,7 +594,7 @@ resource "azurerm_network_interface" "vm" {
 }
 
 locals {
-  network_interface_ids = var.new_network_interface != null ? [
+  network_interface_ids = azurerm_public_ip.pip != null ? [
     azurerm_network_interface.vm[0].id
   ] : var.network_interface_ids
 }
@@ -743,4 +724,11 @@ resource "azurerm_virtual_machine_extension" "extensions" {
   }
 
   depends_on = [azurerm_virtual_machine_data_disk_attachment.attachment]
+}
+
+data "azurerm_public_ip" "pip" {
+  count = var.create_public_ip ? 1 : 0
+
+  name                = azurerm_public_ip.pip[count.index].name
+  resource_group_name = var.resource_group_name
 }
