@@ -15,7 +15,7 @@ resource "azurerm_public_ip" "pip" {
   resource_group_name = var.resource_group_name
 }
 resource "azurerm_network_interface_security_group_association" "linux_nic" {
-  network_interface_id      = azurerm_linux_virtual_machine.vm_linux[count.index].network_interface_ids
+  network_interface_id      = azurerm_linux_virtual_machine.vm_linux[0].network_interface_ids
   network_security_group_id = azurerm_network_security_group.nsg.id
 }
 
